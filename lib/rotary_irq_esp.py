@@ -3,6 +3,30 @@
 # Documentation:
 #   https://github.com/tsiiot/micropython-rotary
 
+"""
+ESP8266 GPIO 推荐引脚
+    通用输入输出口4
+    通用输入输出口5
+    GPIO12
+    GPIO13
+    GPIO14
+以下 ESP8266 GPIO 引脚应谨慎使用。CLK 和 DT 信号的状态可能会影响引导顺序。如果可能，请使用其他 GPIO 引脚。
+    GPIO0 - 用于检测启动模式。Bootloader 在上电期间引脚为低电平时运行。
+    GPIO2 - 用于检测启动模式。连接到上拉电阻。
+    GPIO15 - 用于检测启动模式。连接到下拉电阻。
+一个引脚不支持中断。
+    GPIO16 - 不支持中断。
+
+ESP32 GPIO 推荐引脚
+    ESP32 的所有 GPIO 引脚都支持中断，但是慎使用以下 ESP32 GPIO strapping 引脚
+    GPIO0 - 用于检测启动模式。Bootloader 在上电期间引脚为低电平时运行。内部上拉电阻。
+    GPIO2 - 用于进入串行引导加载程序。内部下拉电阻。
+    GPIO4 - 技术参考表明这是一个 strapping pin，但没有描述用法。内部下拉电阻。
+    GPIO5 - 用于配置 SDIO Slave。内部上拉电阻。
+    GPIO12 - 用于选择闪光电压。内部下拉电阻。
+    GPIO15 - 用于配置引导消息的静音。内部上拉电阻。
+"""
+
 from machine import Pin, Timer
 from rotary import Rotary
 from sys import platform

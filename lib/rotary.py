@@ -3,6 +3,17 @@
 # Documentation:
 #   https://github.com/tsiiot/micropython-rotary
 
+"""
+基于格雷码的过渡状态表处理 DT 和 CLK 的变化。状态表的使用，可更有效的计数和开关去抖动
+
+编码器接线
+编码器引脚	单片机引脚
++	        3.3V
+GND         GND
+DT	        GPIO
+CLK         GPIO
+"""
+
 import micropython
 import utime
 
