@@ -3,7 +3,7 @@ import os
 from machine import Pin, I2C, SoftI2C, UART
 import uasyncio as asyncio
 import utime
-from rotary_irq_rp2 import RotaryIRQ
+from rotary_irq_esp import RotaryIRQ
 
 rotary = RotaryIRQ(pin_num_clk=0, pin_num_dt=1, pin_num_btn=2, reverse=False, half_step=True)
 
