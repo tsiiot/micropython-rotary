@@ -99,6 +99,7 @@ class Rotary(object):
     BUTTON_RELEASE = const(1) # 按钮释放
 
     def __init__(self, min_val, max_val, incr, reverse, range_mode, half_step, invert, btn_value):
+        # invert  将CLK和DT信号反相。当编码器静止值为CLK，DT=00时使用
         self._min_val = min_val
         self._max_val = max_val
         self._incr = incr
