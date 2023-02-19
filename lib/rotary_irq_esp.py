@@ -46,9 +46,10 @@ class RotaryIRQ(Rotary):
         incr=1,
         reverse=False,
         range_mode=Rotary.RANGE_UNBOUNDED,
-        pull_up=False,
+        pull_up=True,
         half_step=False,
-        invert=False
+        invert=False,
+        rotary_id = 0
     ):
 
         if platform == 'esp8266':
@@ -74,7 +75,7 @@ class RotaryIRQ(Rotary):
             self._pin_dt = Pin(pin_num_dt, Pin.IN)
             self._pin_btn = Pin(pin_num_btn, Pin.IN)
             
-        super().__init__(min_val, max_val, incr, reverse, range_mode, half_step, invert, self._pin_btn.value())
+        super().__init__(min_val, max_val, incr, reverse, range_mode, half_step, invert, rotary_id, self._pin_btn.value())
         
         self._counter_timer = Timer(1)
 

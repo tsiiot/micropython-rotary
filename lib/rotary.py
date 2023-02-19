@@ -72,21 +72,21 @@ def _bound(value, incr, lower_bound, upper_bound):
     return min(upper_bound, max(lower_bound, value + incr))
 
 
-def _trigger(rotary_instance, value, direction):
+def _trigger(rotary_instance, rotary_id, value, direction):
     for listener in rotary_instance._listener:
-        listener(value, direction)
+        listener(rotary_id, value, direction)
         
-def _trigger_button(rotary_instance, state, t):
+def _trigger_button(rotary_instance, rotary_id, state, t):
     for listener in rotary_instance._button_listener:
-        listener(state, t)
+        listener(rotary_id, state, t)
         
-def _trigger_dbclick(rotary_instance):
+def _trigger_dbclick(rotary_instance, rotary_id):
     for listener in rotary_instance._dbclick_listener:
-        listener()
+        listener(rotary_id)
        
-def _trigger_counter(rotary_instance, count):
+def _trigger_counter(rotary_instance, rotary_id, count):
     for listener in rotary_instance._counter_listener:
-        listener(count)
+        listener(rotary_id, count)
 
 
 class Rotary(object):
@@ -98,8 +98,9 @@ class Rotary(object):
     BUTTON_PRESS = const(0) # 按钮按下
     BUTTON_RELEASE = const(1) # 按钮释放
 
-    def __init__(self, min_val, max_val, incr, reverse, range_mode, half_step, invert, btn_value):
+    def __init__(self, min_val, max_val, incr, reverse, range_mode, half_step, invert, rotary_id, btn_value):
         # invert  将CLK和DT信号反相。当编码器静止值为CLK，DT=00时使用
+        self._rotary_id = rotary_id
         self._min_val = min_val
         self._max_val = max_val
         self._incr = incr
@@ -238,10 +239,10 @@ class Rotary(object):
 
         try:
             if old_value != self._value and len(self._listener) != 0:
-                _trigger(self, self.value(), self.direction())
+                _trigger(self, self._rotary_id, self.value(), self.direction())
                 
             if old_value != self._value and 'change_callback_func' in dir(self):
-                self.change_callback_func(self.value(), self.direction())
+                self.change_callback_func(self._rotary_id, self.value(), self.direction())
         except:
             pass
         
@@ -263,19 +264,19 @@ class Rotary(object):
                     self._btn_press_count = self._btn_press_count + 1 #按下计数器累加
                     
                     if len(self._button_listener) != 0:
-                        _trigger_button(self, BUTTON_PRESS, 0)
+                        _trigger_button(self, self._rotary_id, BUTTON_PRESS, 0)
                         
                     if 'click_callback_func' in dir(self):
-                        self.click_callback_func(BUTTON_PRESS, 0)
+                        self.click_callback_func(self._rotary_id, BUTTON_PRESS, 0)
                         
                 elif self._btn_value == BUTTON_RELEASE: #释放
                     diff_time = utime.ticks_ms() - self._btn_press_time
                     
                     if len(self._button_listener) != 0:
-                        _trigger_button(self, BUTTON_RELEASE, diff_time)
+                        _trigger_button(self, self._rotary_id, BUTTON_RELEASE, diff_time)
                     
                     if 'click_callback_func' in dir(self):
-                        self.click_callback_func(BUTTON_RELEASE, diff_time)
+                        self.click_callback_func(self._rotary_id, BUTTON_RELEASE, diff_time)
                 else:
                     print('按钮: 未知')
         except:
@@ -294,16 +295,16 @@ class Rotary(object):
         try:
             if self._btn_press_count > 1 and (utime.ticks_ms() - self._btn_press_time) >= 250:
                 if self._btn_press_count > 2 and len(self._counter_listener) != 0:
-                    _trigger_counter(self, self._btn_press_count)
+                    _trigger_counter(self, self._rotary_id, self._btn_press_count)
                     
                 if self._btn_press_count > 2 and 'counter_callback_func' in dir(self):
-                    self.counter_callback_func(self._btn_press_count)
+                    self.counter_callback_func(self._rotary_id, self._btn_press_count)
                 
                 if self._btn_press_count == 2 and len(self._dbclick_listener) != 0:
-                    _trigger_dbclick(self)
+                    _trigger_dbclick(self, self._rotary_id)
                     
                 if self._btn_press_count == 2 and 'dbclick_callback_func' in dir(self):
-                    self.dbclick_callback_func()
+                    self.dbclick_callback_func(self._rotary_id)
                 
                 self._btn_press_count = 0
         except:
