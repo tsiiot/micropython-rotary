@@ -36,6 +36,10 @@ class RotaryIRQ(Rotary):
                 raise ValueError(
                     '%s: Pin %d not allowed. Not Available for Interrupt: %s' %
                     (platform, pin_num_dt, _esp8266_deny_pins))
+            if pin_num_btn in _esp8266_deny_pins:
+                raise ValueError(
+                    '%s: Pin %d not allowed. Not Available for Interrupt: %s' %
+                    (platform, pin_num_btn, _esp8266_deny_pins))
 
         if pull_up == True:
             self._pin_clk = Pin(pin_num_clk, Pin.IN, Pin.PULL_UP)
